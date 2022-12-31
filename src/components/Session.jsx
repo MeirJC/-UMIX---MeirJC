@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import Kit from "./Kit";
 function Session() {
+  //? create new audio context for the session (global)
   const [ctx, setCtx] = useState(null);
-  // setting the audio context and passing it to the child components
-  const setContext = () => {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioContext = new AudioContext();
-    console.log(audioContext);
-    setCtx(audioContext);
-  };
-
-  // complete url list to be paeeed to each kit
+  //? Check which kits are loaded
+  const [allKitsLoaded, setAllKitsLoaded] = useState([
+    false,
+    false,
+    false,
+    false,
+  ]);
+  //? check if ALL kits are loaded
+  const [fullLoad, setFullLoad] = useState(false);
+  //? complete url list to be paeeed to each kit
   const audioFiles = {
     drums: [
       { src: "./samples/Hdrm1.mp3" },
@@ -37,6 +39,29 @@ function Session() {
       { src: "./samples/Hgtr4.mp3" },
     ],
   };
+  //!==============================================
+  // checking if all kits are loaded
+  const kitLoadCheck = (isLoaded, index) => {
+    if (isLoaded) {
+      setAllKitsLoaded((prev) => {
+        prev[index] = true;
+        return prev;
+      });
+    }
+    if (allKitsLoaded.every((item) => item === true)) {
+      setFullLoad(true);
+    }
+    console.log("allKitsLoaded", allKitsLoaded);
+  };
+  //!==============================================
+  // setting the audio context and passing it to the child components
+  const setContext = () => {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioContext = new AudioContext();
+    console.log(audioContext);
+    setCtx(audioContext);
+  };
+
   const loadContext = () => {
     if (!ctx) {
       setContext();
@@ -45,11 +70,35 @@ function Session() {
   return (
     <div style={{ border: "2px solid white", padding: "1rem 3rem" }}>
       <h1>Session</h1>
-      <button onClick={loadContext}>Load Context</button>
-      <Kit ctx={ctx} links={audioFiles.drums} />
-      <Kit ctx={ctx} links={audioFiles.bass} />
-      <Kit ctx={ctx} links={audioFiles.piano} />
-      <Kit ctx={ctx} links={audioFiles.guitar} />
+      {!fullLoad ? (
+        <button onClick={loadContext}>Load Context</button>
+      ) : (
+        <button>Play</button>
+      )}
+      <Kit
+        ctx={ctx}
+        kitLoadCheck={kitLoadCheck}
+        links={audioFiles.drums}
+        kitIdx={0}
+      />
+      <Kit
+        ctx={ctx}
+        kitLoadCheck={kitLoadCheck}
+        links={audioFiles.bass}
+        kitIdx={1}
+      />
+      <Kit
+        ctx={ctx}
+        kitLoadCheck={kitLoadCheck}
+        links={audioFiles.piano}
+        kitIdx={2}
+      />
+      <Kit
+        ctx={ctx}
+        kitLoadCheck={kitLoadCheck}
+        links={audioFiles.guitar}
+        kitIdx={3}
+      />
     </div>
   );
 }

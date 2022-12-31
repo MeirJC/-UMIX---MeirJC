@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function Loop({ ctx, url }) {
+function Loop({ ctx, url, index, loopsLoadCheck }) {
   // let url = "./samples/Hdrm1.mp3";
   const [loop, setLoop] = useState(null);
   const [loopGain, setLoopGain] = useState(0);
@@ -24,22 +24,22 @@ function Loop({ ctx, url }) {
 
     //? create new gain node
     const gainNode = await ctx.createGain();
-    gainNode.gain.value = 0;
-    console.log("gainNode", gainNode);
-    //? set the gain node to state
+    // gainNode.gain.value = 0;
+    // console.log("gainNode", gainNode);
+    //? connect the gain node to the final destination
     gainNode.connect(ctx.destination);
+    //? set the gain node to state
     setLoopGain(gainNode);
     // gainNode.gain.value = 0;
+    //? connect the gain node to the gain node
     source.connect(gainNode);
+    //? set the isLoaded to true (verify that the audio file is loaded)
     setIsLoaded(true);
   };
+
   useEffect(() => {
-    setTimeout(() => {
-      ctx && loadAudioFile();
-      setTimeout(() => {
-        play();
-      }, 1000);
-    }, 2000);
+    ctx && loadAudioFile();
+    // isLoaded && loadCheck(isLoaded, index);
     // ctx && loadAudioFile();
 
     // ctx && play();
@@ -47,19 +47,24 @@ function Loop({ ctx, url }) {
     // isLoaded && loadAudioFile();
 
     // isLoaded && currntGain.gain.value = currntGain;
-  }, [""]);
+  }, []);
+  //!==============================================
+  const isItLoaded = async () => {
+    await loopsLoadCheck(isLoaded, index);
+  };
+  isItLoaded();
+  //!==============================================
   const play = async () => {
     await loop.start();
   };
-
   const mute = () => {
-    // console.log("currntGain", currntGain.gain);
     if (loopGain.gain.value === 0) {
       loopGain.gain.value = 1;
     } else {
       loopGain.gain.value = 0;
     }
   };
+
   return (
     <div
       style={{
