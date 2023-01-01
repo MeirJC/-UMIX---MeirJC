@@ -7,6 +7,7 @@ function FullSession({ type }) {
   // const [bass, setBass] = useState([null, null, null, null]);
   // const [piano, setPiano] = useState([null, null, null, null]);
   // const [guitar, setGuitar] = useState([null, null, null, null]);
+  const [loadedLoops, setLoadedLoops] = useState([null, null, null, null]);
   //* -----=====Audio Files=====-----
 
   //* -----=====Functions=====-----

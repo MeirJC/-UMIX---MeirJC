@@ -53,6 +53,7 @@ function Loop({ ctx, url, index, loopsLoadCheck }) {
   isItLoaded();
   //!==============================================
   const play = async () => {
+    console.log("loop", loop);
     await loop.start();
   };
   const mute = () => {
