@@ -40,7 +40,7 @@ function Session() {
     ],
   };
   //!==============================================
-  // checking if all kits are loaded
+  //? checking if all kits are loaded
   const kitLoadCheck = (isLoaded, index) => {
     if (isLoaded) {
       setAllKitsLoaded((prev) => {
@@ -54,7 +54,7 @@ function Session() {
     console.log("allKitsLoaded", allKitsLoaded);
   };
   //!==============================================
-  // setting the audio context and passing it to the child components
+  //? setting the audio context and passing it to the child components
   const setContext = () => {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioContext = new AudioContext();
@@ -73,7 +73,10 @@ function Session() {
       {!fullLoad ? (
         <button onClick={loadContext}>Load Context</button>
       ) : (
-        <button>Play</button>
+        <>
+          <button>Play</button>
+          <button>Stop</button>
+        </>
       )}
       <Kit
         ctx={ctx}

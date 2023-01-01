@@ -39,13 +39,11 @@ function Loop({ ctx, url, index, loopsLoadCheck }) {
 
   useEffect(() => {
     ctx && loadAudioFile();
+    console.log(ctx);
     // isLoaded && loadCheck(isLoaded, index);
     // ctx && loadAudioFile();
-
     // ctx && play();
-
     // isLoaded && loadAudioFile();
-
     // isLoaded && currntGain.gain.value = currntGain;
   }, []);
   //!==============================================
