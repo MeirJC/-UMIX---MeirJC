@@ -9,7 +9,6 @@ function InstrumentRack({
   activeAudioFile,
   setActiveAudioFile,
   allLoaded,
-  loaded,
   playTrigger,
 }) {
   //! -----=====\\\ States ///=====-----
@@ -102,21 +101,17 @@ function InstrumentRack({
     }
 
     // console.log("activeAudioFile in handleButtonClick: ", activeAudioFile);
-    // allLoaded && play();
-  }, [activeAudioFile, allLoaded, playTrigger]);
+
+    // eslint-disable-next-line
+  }, [
+    Links,
+    activeAudioFile,
+    allLoaded,
+    playTrigger,
+    audioFiles,
+    setActiveAudioFile,
+  ]);
   //----------------------------------------------------------------------
-  // useEffect(() => {
-  //   allLoaded && !playState && play(audioFiles);
-  // }, [playState, allLoaded]);
-  //----------------------------------------------------------------------
-  // console.log(
-  //   "loaded - arr - useState -  that holds arr of true/false): ",
-  //   loaded
-  // );
-  // console.log(
-  //   "allLoaded - true/false - useState -if all loaded arr is true: ",
-  //   allLoaded
-  // );
   //? Function to play all the audio files
   function play(fileArr) {
     fileArr.forEach((file) => {
@@ -133,11 +128,11 @@ function InstrumentRack({
         start play
       </button> */}
       {audioFiles.map((audioFile, i) => (
-        <div style={{ display: "inline-block" }}>
-          <button
-            key={Math.floor(Math.random() * 10000000)}
-            onClick={() => handleButtonClick(i)}
-          >
+        <div
+          key={Math.floor(Math.random() * 10000000)}
+          style={{ display: "inline-block" }}
+        >
+          <button onClick={() => handleButtonClick(i)}>
             Audio File {i + 1}
           </button>
         </div>
