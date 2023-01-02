@@ -16,7 +16,7 @@ function EnsambleRack() {
   //? State to verify if all the InstrumentRack components are loaded
   //? When all loaded array stsate is true, the play button will be enabled
   //TODO - this state is not working properly
-  const [allLoaded, setAllLoaded] = useState(false);
+  const [allLoaded, setAllLoaded] = useState("");
   //----------------------------------------------------------------------
   //? State to hold the active audio file in each InstrumentRack component
   //TODO - this state is not working properly
@@ -26,6 +26,9 @@ function EnsambleRack() {
     null,
     null,
   ]);
+  //----------------------------------------------------------------------
+  //? state to trigger PLay/Stop in child components
+  const [playTrigger, setPlayTrigger] = useState(false);
   //======================================================================
   //! -----=====\\\ Audio Files ///=====-----
   //? complete url list to be paeeed to each kit
@@ -61,7 +64,7 @@ function EnsambleRack() {
   const setContext = () => {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioContext = new AudioContext();
-    console.log("audioContext inside setContext func", audioContext);
+    // console.log("audioContext inside setContext func", audioContext);
     setCtx(audioContext);
   };
   //? Function to load the audio context
@@ -71,31 +74,19 @@ function EnsambleRack() {
     }
   };
   //----------------------------------------------------------------------
-  //? Function to check the loaded state of the InstrumentRack components
-  //TODO - Review this functions
-  const allSamplesAreLoaded = loaded.every((item) => item === true);
-  if (allSamplesAreLoaded) {
-    setAllLoaded(true);
-    console.log("All is Loaded!", "allLoaded", allLoaded, "loaded", loaded);
-  }
-  //----------------------------------------------------------------------
   //? Function to handle the click event of the play/stop button
   const handlePlayClick = () => {
+    console.log("CLick on button", "playState", playState);
     setPlayState(!playState);
   };
   //----------------------------------------------------------------------
-  //? Function to check the loaded state of the InstrumentRack components
-  //TODO - this function is not working properly
-  if (loaded.every((item) => item === true)) {
-    setAllLoaded(true);
-    console.log("All is Loaded!", "allLoaded", allLoaded, "loaded", loaded);
-  }
   function checkLOADED() {
     console.log("loaded", loaded);
     console.log("activeAudioFile", activeAudioFile);
     const allLoaded = loaded.every((item) => item === true);
     console.log("allLoaded", allLoaded);
   }
+
   //----------------------------------------------------------------------
   //! -----=====\\\ UseEffect to Update Changes ///=====-----
   useEffect(() => {
@@ -105,6 +96,11 @@ function EnsambleRack() {
     } else if (ctx && !playState) {
       //* Stop playing all of the audio files in the InstrumentRack components
       // ctx.stop(); //? this is not a function - just a placeholder
+    }
+    //? Function to check the loaded state of the InstrumentRack components
+    if (loaded.every((item) => item === true)) {
+      setAllLoaded(true);
+      console.log("All is Loaded!", "allLoaded", allLoaded, "loaded", loaded);
     }
   }, [ctx, playState, loaded, allLoaded]);
 
@@ -128,6 +124,7 @@ function EnsambleRack() {
             key={"drums"}
             loadedIndex={0}
             setActiveAudioFile={setActiveAudioFile}
+            loaded={loaded}
           />
           <InstrumentRack
             activeAudioFile={activeAudioFile}
@@ -137,6 +134,7 @@ function EnsambleRack() {
             key={"bass"}
             loadedIndex={1}
             setActiveAudioFile={setActiveAudioFile}
+            loaded={loaded}
           />
           <InstrumentRack
             activeAudioFile={activeAudioFile}
@@ -146,6 +144,7 @@ function EnsambleRack() {
             key={"guitar"}
             loadedIndex={2}
             setActiveAudioFile={setActiveAudioFile}
+            loaded={loaded}
           />
           <InstrumentRack
             activeAudioFile={activeAudioFile}
@@ -155,6 +154,7 @@ function EnsambleRack() {
             key={"piano"}
             loadedIndex={3}
             setActiveAudioFile={setActiveAudioFile}
+            loaded={loaded}
           />
         </div>
       )}

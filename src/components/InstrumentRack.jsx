@@ -5,18 +5,16 @@ function InstrumentRack({
   Links,
   ctx,
   setLoaded,
-  playState,
   loadedIndex,
   activeAudioFile,
   setActiveAudioFile,
   allLoaded,
+  loaded,
 }) {
   //! -----=====\\\ States ///=====-----
   //? State to hold the audio files
   const [audioFiles, setAudioFiles] = useState([null, null, null, null]);
   //----------------------------------------------------------------------
-  //? State to hold the active audio clip
-  const [currntClip, setCurrentClip] = useState(null);
   //! -----=====\\\ Functions ///=====-----
   //? Function to load the audio files and initialize them
   const loadAudioFiles = async (files) => {
@@ -45,12 +43,9 @@ function InstrumentRack({
         prevState[i] = { source, gainNode };
         return prevState;
       });
-      // console.log("source in loadAudioFiles in InstrumentRack: ", source);
       return source;
     });
     Promise.all(requests).then((requests) => {
-      console.log("requests in InstrumentRack: ", requests);
-      console.log("audioFiles in InstrumentRack: ", audioFiles);
       setLoaded((prevState) => {
         prevState[loadedIndex] = true;
         return prevState;
@@ -59,25 +54,22 @@ function InstrumentRack({
   };
   //----------------------------------------------------------------------
   //? Function to handle the click event of the audio file buttons
-  //TODO: Fix the bug where the audio files are not playing
   const handleButtonClick = (i) => {
-    // console.log("audioFiles[i] in handleButtonClick: ", audioFiles[i]);
+    //* Set the activeAudioFile in the parent component to the current audio file index
+    setActiveAudioFile((prevState) => {
+      prevState[loadedIndex] = i;
+      return prevState;
+    });
     console.log("allLoaded in play: ", allLoaded);
-    //* set the currnt clip playing
-    setCurrentClip(i);
-    console.log("currntClip in handleButtonClick: ", currntClip);
-
+    console.log("activeAudioFile in play: ", activeAudioFile);
     audioFiles.forEach((audioFile, j) => {
-      // console.log(audioFiles[i].gainNode.gain.value);
       const current = audioFiles[i].gainNode.gain.value === 1 ? 0 : 1;
-      // console.log("i →", i, "j→", j);
-
       if (i === j) {
         audioFiles[j].gainNode.gain.value = current;
       } else {
         audioFiles[j].gainNode.gain.value = 0;
       }
-      console.log(audioFiles[j].gainNode.gain.value);
+      // console.log(audioFiles[j].gainNode.gain.value);
     });
   };
   //----------------------------------------------------------------------
@@ -99,10 +91,22 @@ function InstrumentRack({
       prevState[loadedIndex] = 0;
       return prevState;
     });
-    console.log("activeAudioFile in handleButtonClick: ", activeAudioFile);
-    allLoaded && play();
+    // console.log("activeAudioFile in handleButtonClick: ", activeAudioFile);
+    // allLoaded && play();
   }, [activeAudioFile, allLoaded]);
-
+  //----------------------------------------------------------------------
+  // useEffect(() => {
+  //   allLoaded && !playState && play(audioFiles);
+  // }, [playState, allLoaded]);
+  //----------------------------------------------------------------------
+  // console.log(
+  //   "loaded - arr - useState -  that holds arr of true/false): ",
+  //   loaded
+  // );
+  // console.log(
+  //   "allLoaded - true/false - useState -if all loaded arr is true: ",
+  //   allLoaded
+  // );
   //? Function to play all the audio files
   function play(audioState) {
     audioState.forEach((audioFile) => {
@@ -110,19 +114,22 @@ function InstrumentRack({
     });
   }
   return (
-    <div>
+    <div style={{ border: "3px solid green", margin: "10px" }}>
+      <button
+        key={Math.floor(Math.random() * 10000000)}
+        onClick={() => play(audioFiles)}
+      >
+        start play
+      </button>
       {audioFiles.map((audioFile, i) => (
-        <>
-          <button key={i} onClick={() => handleButtonClick(i)}>
-            Audio File {i + 1}
-          </button>
+        <div style={{ display: "inline-block" }}>
           <button
             key={Math.floor(Math.random() * 10000000)}
-            onClick={() => play(audioFiles)}
+            onClick={() => handleButtonClick(i)}
           >
-            start play
+            Audio File {i + 1}
           </button>
-        </>
+        </div>
       ))}
     </div>
   );
