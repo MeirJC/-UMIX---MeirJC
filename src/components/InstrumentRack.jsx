@@ -1,3 +1,4 @@
+//! -----===== /// MAIN COMPONENT - CHILD \\\=====-----
 import React, { useState, useEffect } from "react";
 
 function InstrumentRack({
@@ -10,33 +11,35 @@ function InstrumentRack({
   setActiveAudioFile,
   allLoaded,
 }) {
-  //* -----=====States=====-----
+  //! -----=====\\\ States ///=====-----
   //? State to hold the audio files
   const [audioFiles, setAudioFiles] = useState([null, null, null, null]);
+  //----------------------------------------------------------------------
   //? State to hold the active audio clip
   const [currntClip, setCurrentClip] = useState(null);
-  //* -----=====Functions=====-----
+  //! -----=====\\\ Functions ///=====-----
   //? Function to load the audio files and initialize them
   const loadAudioFiles = async (files) => {
-    // console.log("files", files);
     const requests = await files.map(async (node, i) => {
+      //* fetch song from url or physical audio
       const response = await fetch(node.src);
+      //* convert audio to arrayBuffer
       const arrayBuffer = await response.arrayBuffer();
-      // console.log("ctx inside loadAudioFiles in INstrumentRack: ", ctx);
+      //* convert arrayBuffer to audioBuffer
       const audioBuffer = await ctx.decodeAudioData(arrayBuffer); //
-      //? create new buffer source Node
+      //* create new buffer source Node
       const source = await ctx.createBufferSource();
-      //? connect the audio buffer that we created before to the source node
+      //* connect the audio buffer that we created before to the source node
       source.buffer = audioBuffer;
-      //? set the source node to loop
+      //* set the source node to loop
       source.loop = true;
-      //? create new gain node
+      //* create new gain node
       const gainNode = await ctx.createGain();
-      //? set the gain of the gain node to 0
+      //* set the gain of the gain node to 0
       gainNode.gain.value = 0;
-      //? connect the gain node to the final destination
+      //* connect the gain node to the final destination
       gainNode.connect(ctx.destination);
-      //? connect the gain node to the gain node
+      //* connect the gain node to the gain node
       source.connect(gainNode);
       setAudioFiles((prevState) => {
         prevState[i] = { source, gainNode };
@@ -54,23 +57,9 @@ function InstrumentRack({
       });
     });
   };
-
-  //? Use the useEffect hook to load the audio files when the component mounts
-  useEffect(() => {
-    ctx && loadAudioFiles(Links);
-    // setLoaded((prevState) => {
-    //   return [...prevState.slice(0, id), true, ...prevState.slice(id + 1)];
-    // });
-    //* Set the activeAudioFile in the parent component to the current audio file index
-    setActiveAudioFile((prevState) => {
-      prevState[loadedIndex] = 0;
-      return prevState;
-    });
-    console.log("activeAudioFile in handleButtonClick: ", activeAudioFile);
-    allLoaded && play();
-  }, [activeAudioFile, allLoaded]);
-
+  //----------------------------------------------------------------------
   //? Function to handle the click event of the audio file buttons
+  //TODO: Fix the bug where the audio files are not playing
   const handleButtonClick = (i) => {
     // console.log("audioFiles[i] in handleButtonClick: ", audioFiles[i]);
     console.log("allLoaded in play: ", allLoaded);
@@ -91,6 +80,29 @@ function InstrumentRack({
       console.log(audioFiles[j].gainNode.gain.value);
     });
   };
+  //----------------------------------------------------------------------
+  //? Function to play all the audio files
+  function play(audioState) {
+    audioState.forEach((audioFile) => {
+      audioFile.source.start();
+    });
+  }
+  //----------------------------------------------------------------------
+  //? Use the useEffect hook to load the audio files when the component mounts
+  useEffect(() => {
+    ctx && loadAudioFiles(Links);
+    // setLoaded((prevState) => {
+    //   return [...prevState.slice(0, id), true, ...prevState.slice(id + 1)];
+    // });
+    //* Set the activeAudioFile in the parent component to the current audio file index
+    setActiveAudioFile((prevState) => {
+      prevState[loadedIndex] = 0;
+      return prevState;
+    });
+    console.log("activeAudioFile in handleButtonClick: ", activeAudioFile);
+    allLoaded && play();
+  }, [activeAudioFile, allLoaded]);
+
   //? Function to play all the audio files
   function play(audioState) {
     audioState.forEach((audioFile) => {

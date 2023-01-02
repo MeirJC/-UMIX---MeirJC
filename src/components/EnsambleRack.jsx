@@ -1,23 +1,33 @@
+//! -----===== \\\ MAIN COMPONENT - FATHER ///=====-----
 import React, { useState, useEffect } from "react";
 import InstrumentRack from "./InstrumentRack";
 function EnsambleRack() {
-  //* -----=====States=====-----
+  //! -----=====\\\ States ///=====-----
   //? create new audio context for the session (global)
   const [ctx, setCtx] = useState(null);
+  //----------------------------------------------------------------------
   //? State to hold the global play/stop state
   const [playState, setPlayState] = useState(false);
-  //? State to hold the loaded state of the InstrumentRack components
+  //----------------------------------------------------------------------
+  //? State to hold the loaded state of the InstrumentRack components (drums, bass, guitar, piano)
+  //? each index of the array represents the loaded state of each InstrumentRack component
   const [loaded, setLoaded] = useState([false, false, false, false]);
+  //----------------------------------------------------------------------
   //? State to verify if all the InstrumentRack components are loaded
+  //? When all loaded array stsate is true, the play button will be enabled
+  //TODO - this state is not working properly
   const [allLoaded, setAllLoaded] = useState(false);
-  //? State to hold the active audio file
+  //----------------------------------------------------------------------
+  //? State to hold the active audio file in each InstrumentRack component
+  //TODO - this state is not working properly
   const [activeAudioFile, setActiveAudioFile] = useState([
     null,
     null,
     null,
     null,
   ]);
-  //* -----=====Audio Files=====-----
+  //======================================================================
+  //! -----=====\\\ Audio Files ///=====-----
   //? complete url list to be paeeed to each kit
   const audioFiles = {
     drums: [
@@ -45,21 +55,49 @@ function EnsambleRack() {
       { src: "./samples/Hkys4.mp3" },
     ],
   };
-
-  //* -----=====Functions=====-----
-  //? setting the audio context and passing it to the child components
+  //======================================================================
+  //! -----=====\\\ Functions ///=====-----
+  //? setting the global audio context and passing it to the child components
   const setContext = () => {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioContext = new AudioContext();
     console.log("audioContext inside setContext func", audioContext);
     setCtx(audioContext);
   };
+  //? Function to load the audio context
   const loadContext = () => {
     if (!ctx) {
       setContext();
     }
   };
-
+  //----------------------------------------------------------------------
+  //? Function to check the loaded state of the InstrumentRack components
+  //TODO - Review this functions
+  const allSamplesAreLoaded = loaded.every((item) => item === true);
+  if (allSamplesAreLoaded) {
+    setAllLoaded(true);
+    console.log("All is Loaded!", "allLoaded", allLoaded, "loaded", loaded);
+  }
+  //----------------------------------------------------------------------
+  //? Function to handle the click event of the play/stop button
+  const handlePlayClick = () => {
+    setPlayState(!playState);
+  };
+  //----------------------------------------------------------------------
+  //? Function to check the loaded state of the InstrumentRack components
+  //TODO - this function is not working properly
+  if (loaded.every((item) => item === true)) {
+    setAllLoaded(true);
+    console.log("All is Loaded!", "allLoaded", allLoaded, "loaded", loaded);
+  }
+  function checkLOADED() {
+    console.log("loaded", loaded);
+    console.log("activeAudioFile", activeAudioFile);
+    const allLoaded = loaded.every((item) => item === true);
+    console.log("allLoaded", allLoaded);
+  }
+  //----------------------------------------------------------------------
+  //! -----=====\\\ UseEffect to Update Changes ///=====-----
   useEffect(() => {
     if (ctx && playState) {
       //* Start playing all of the audio files in the InstrumentRack components
@@ -70,27 +108,6 @@ function EnsambleRack() {
     }
   }, [ctx, playState, loaded, allLoaded]);
 
-  //? Function to check the loaded state of the InstrumentRack components
-  const allSamplesAreLoaded = loaded.every((item) => item === true);
-  if (allSamplesAreLoaded) {
-    setAllLoaded(true);
-    console.log("All is Loaded!", "allLoaded", allLoaded, "loaded", loaded);
-  }
-  //* Function to handle the click event of the play/stop button
-  const handlePlayClick = () => {
-    setPlayState(!playState);
-  };
-  // //? Function to check the loaded state of the InstrumentRack components
-  // if (loaded.every((item) => item === true)) {
-  //   setAllLoaded(true);
-  //   console.log("All is Loaded!", "allLoaded", allLoaded, "loaded", loaded);
-  // }
-  function checkLOADED() {
-    console.log("loaded", loaded);
-    console.log("activeAudioFile", activeAudioFile);
-    const allLoaded = loaded.every((item) => item === true);
-    console.log("allLoaded", allLoaded);
-  }
   console.log("activeAudioFile in EnsambleRack", activeAudioFile);
   return (
     <div style={{ border: "4px solid orange", padding: "1.4rem 1.4rem" }}>
