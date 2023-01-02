@@ -78,13 +78,15 @@ function EnsambleRack() {
   const handlePlayClick = () => {
     console.log("CLick on button", "playState", playState);
     setPlayState(!playState);
+    playState ? setPlayTrigger("stop") : setPlayTrigger("play");
+    console.log("||||playTrigger||||", playTrigger, "playState", playState);
   };
   //----------------------------------------------------------------------
   function checkLOADED() {
-    console.log("loaded", loaded);
-    console.log("activeAudioFile", activeAudioFile);
+    // console.log("loaded", loaded);
+    // console.log("activeAudioFile", activeAudioFile);
     const allLoaded = loaded.every((item) => item === true);
-    console.log("allLoaded", allLoaded);
+    // console.log("allLoaded", allLoaded);
   }
 
   //----------------------------------------------------------------------
@@ -100,11 +102,11 @@ function EnsambleRack() {
     //? Function to check the loaded state of the InstrumentRack components
     if (loaded.every((item) => item === true)) {
       setAllLoaded(true);
-      console.log("All is Loaded!", "allLoaded", allLoaded, "loaded", loaded);
+      // console.log("All is Loaded!", "allLoaded", allLoaded, "loaded", loaded);
     }
   }, [ctx, playState, loaded, allLoaded]);
 
-  console.log("activeAudioFile in EnsambleRack", activeAudioFile);
+  // console.log("activeAudioFile in EnsambleRack", activeAudioFile);
   return (
     <div style={{ border: "4px solid orange", padding: "1.4rem 1.4rem" }}>
       <button onClick={checkLOADED}>CHEK LOADDDD</button>
@@ -125,6 +127,7 @@ function EnsambleRack() {
             loadedIndex={0}
             setActiveAudioFile={setActiveAudioFile}
             loaded={loaded}
+            playTrigger={playTrigger}
           />
           <InstrumentRack
             activeAudioFile={activeAudioFile}
@@ -135,6 +138,7 @@ function EnsambleRack() {
             loadedIndex={1}
             setActiveAudioFile={setActiveAudioFile}
             loaded={loaded}
+            playTrigger={playTrigger}
           />
           <InstrumentRack
             activeAudioFile={activeAudioFile}
@@ -145,6 +149,7 @@ function EnsambleRack() {
             loadedIndex={2}
             setActiveAudioFile={setActiveAudioFile}
             loaded={loaded}
+            playTrigger={playTrigger}
           />
           <InstrumentRack
             activeAudioFile={activeAudioFile}
@@ -155,6 +160,7 @@ function EnsambleRack() {
             loadedIndex={3}
             setActiveAudioFile={setActiveAudioFile}
             loaded={loaded}
+            playTrigger={playTrigger}
           />
         </div>
       )}

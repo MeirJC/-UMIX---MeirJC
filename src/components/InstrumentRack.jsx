@@ -10,6 +10,7 @@ function InstrumentRack({
   setActiveAudioFile,
   allLoaded,
   loaded,
+  playTrigger,
 }) {
   //! -----=====\\\ States ///=====-----
   //? State to hold the audio files
@@ -18,6 +19,10 @@ function InstrumentRack({
   //! -----=====\\\ Functions ///=====-----
   //? Function to load the audio files and initialize them
   const loadAudioFiles = async (files) => {
+    //! TRY TO CREATE AUDIO CONTEXT FOR EACH INSTRUMENT RACK
+
+    //!=====================================================
+
     const requests = await files.map(async (node, i) => {
       //* fetch song from url or physical audio
       const response = await fetch(node.src);
@@ -73,12 +78,12 @@ function InstrumentRack({
     });
   };
   //----------------------------------------------------------------------
-  //? Function to play all the audio files
-  function play(audioState) {
-    audioState.forEach((audioFile) => {
-      audioFile.source.start();
-    });
-  }
+  // //? Function to play all the audio files
+  // function play(audioState) {
+  //   audioState.forEach((audioFile) => {
+  //     audioFile.source.start();
+  //   });
+  // }
   //----------------------------------------------------------------------
   //? Use the useEffect hook to load the audio files when the component mounts
   useEffect(() => {
@@ -91,9 +96,14 @@ function InstrumentRack({
       prevState[loadedIndex] = 0;
       return prevState;
     });
+    console.log("playTrigger in USEEFEECT:!!!!!", playTrigger);
+    if (playTrigger === "play") {
+      setTimeout(() => play(audioFiles), 850);
+    }
+
     // console.log("activeAudioFile in handleButtonClick: ", activeAudioFile);
     // allLoaded && play();
-  }, [activeAudioFile, allLoaded]);
+  }, [activeAudioFile, allLoaded, playTrigger]);
   //----------------------------------------------------------------------
   // useEffect(() => {
   //   allLoaded && !playState && play(audioFiles);
@@ -108,19 +118,20 @@ function InstrumentRack({
   //   allLoaded
   // );
   //? Function to play all the audio files
-  function play(audioState) {
-    audioState.forEach((audioFile) => {
-      audioFile.source.start();
+  function play(fileArr) {
+    fileArr.forEach((file) => {
+      file.source.start();
     });
   }
+
   return (
     <div style={{ border: "3px solid green", margin: "10px" }}>
-      <button
+      {/* <button
         key={Math.floor(Math.random() * 10000000)}
         onClick={() => play(audioFiles)}
       >
         start play
-      </button>
+      </button> */}
       {audioFiles.map((audioFile, i) => (
         <div style={{ display: "inline-block" }}>
           <button
