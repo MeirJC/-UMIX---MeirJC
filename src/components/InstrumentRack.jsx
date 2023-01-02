@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
 
-function InstrumentRack({ Links, ctx, setLoaded, loaded, playState, id }) {
+function InstrumentRack({
+  Links,
+  ctx,
+  setLoaded,
+  playState,
+  loadedIndex,
+  activeAudioFile,
+  setActiveAudioFile,
+  allLoaded,
+}) {
   //* -----=====States=====-----
   //? State to hold the audio files
   const [audioFiles, setAudioFiles] = useState([null, null, null, null]);
-  //? State to hold the active audio file
-  const [activeAudioFile, setActiveAudioFile] = useState(null);
+  //? State to hold the active audio clip
+  const [currntClip, setCurrentClip] = useState(null);
   //* -----=====Functions=====-----
   //? Function to load the audio files and initialize them
   const loadAudioFiles = async (files) => {
@@ -21,78 +30,87 @@ function InstrumentRack({ Links, ctx, setLoaded, loaded, playState, id }) {
       source.buffer = audioBuffer;
       //? set the source node to loop
       source.loop = true;
-      //? set the source node to state
-      // setLoop(source);
       //? create new gain node
       const gainNode = await ctx.createGain();
+      //? set the gain of the gain node to 0
       gainNode.gain.value = 0;
-      // console.log("gainNode", gainNode);
       //? connect the gain node to the final destination
       gainNode.connect(ctx.destination);
-      //? set the gain node to state
-      // setLoopGain(gainNode);
-      // gainNode.gain.value = 0;
       //? connect the gain node to the gain node
       source.connect(gainNode);
       setAudioFiles((prevState) => {
-        return [...prevState.slice(0, i), source, ...prevState.slice(i + 1)];
+        prevState[i] = { source, gainNode };
+        return prevState;
       });
       // console.log("source in loadAudioFiles in InstrumentRack: ", source);
-      console.log("source in loadAudioFiles in InstrumentRack: ", source);
       return source;
     });
-    Promise.all(requests)
-      .then((requests) => {
-        let arr = [0, 0, 0, 0];
-        for (let i = 0; i < requests.length; i++) {
-          console.log(
-            "requests in loadAudioFiles in InstrumentRack: ",
-            "i= ",
-            i,
-            requests[i]
-          );
-          arr = [...arr.slice(0, i), requests[i], ...arr.slice(i + 1)];
-          console.log(
-            "arr in loadAudioFiles in InstrumentRack: ",
-            arr,
-            "i= ",
-            i
-          );
-        }
-        // setAudioFiles([...arr]);
-        console.log("arr in loadAudioFiles in InstrumentRack: ", arr);
-      })
-      .then(() => {
-        console.log("audioFiles in InstrumentRack: ", audioFiles);
+    Promise.all(requests).then((requests) => {
+      console.log("requests in InstrumentRack: ", requests);
+      console.log("audioFiles in InstrumentRack: ", audioFiles);
+      setLoaded((prevState) => {
+        prevState[loadedIndex] = true;
+        return prevState;
       });
+    });
   };
 
   //? Use the useEffect hook to load the audio files when the component mounts
   useEffect(() => {
     ctx && loadAudioFiles(Links);
-    setLoaded((prevState) => {
-      return [...prevState.slice(0, id), true, ...prevState.slice(id + 1)];
+    // setLoaded((prevState) => {
+    //   return [...prevState.slice(0, id), true, ...prevState.slice(id + 1)];
+    // });
+    //* Set the activeAudioFile in the parent component to the current audio file index
+    setActiveAudioFile((prevState) => {
+      prevState[loadedIndex] = 0;
+      return prevState;
     });
-  }, []);
+    console.log("activeAudioFile in handleButtonClick: ", activeAudioFile);
+    allLoaded && play();
+  }, [activeAudioFile, allLoaded]);
 
   //? Function to handle the click event of the audio file buttons
   const handleButtonClick = (i) => {
-    //* Set the gain of the current audio file to 1
-    audioFiles[i].gainNode.gain.value = 1;
-    //* Set the gain of the other audio files to 0
+    // console.log("audioFiles[i] in handleButtonClick: ", audioFiles[i]);
+    console.log("allLoaded in play: ", allLoaded);
+    //* set the currnt clip playing
+    setCurrentClip(i);
+    console.log("currntClip in handleButtonClick: ", currntClip);
+
     audioFiles.forEach((audioFile, j) => {
-      if (i !== j) {
-        audioFile.gainNode.gain.value = 0;
+      // console.log(audioFiles[i].gainNode.gain.value);
+      const current = audioFiles[i].gainNode.gain.value === 1 ? 0 : 1;
+      // console.log("i →", i, "j→", j);
+
+      if (i === j) {
+        audioFiles[j].gainNode.gain.value = current;
+      } else {
+        audioFiles[j].gainNode.gain.value = 0;
       }
+      console.log(audioFiles[j].gainNode.gain.value);
     });
   };
-
+  //? Function to play all the audio files
+  function play(audioState) {
+    audioState.forEach((audioFile) => {
+      audioFile.source.start();
+    });
+  }
   return (
     <div>
       {audioFiles.map((audioFile, i) => (
-        <button key={i} onClick={() => handleButtonClick(i)}>
-          Audio File {i + 1}
-        </button>
+        <>
+          <button key={i} onClick={() => handleButtonClick(i)}>
+            Audio File {i + 1}
+          </button>
+          <button
+            key={Math.floor(Math.random() * 10000000)}
+            onClick={() => play(audioFiles)}
+          >
+            start play
+          </button>
+        </>
       ))}
     </div>
   );
