@@ -18,10 +18,6 @@ function InstrumentRack({
   //! -----=====\\\ Functions ///=====-----
   //? Function to load the audio files and initialize them
   const loadAudioFiles = async (files) => {
-    //! TRY TO CREATE AUDIO CONTEXT FOR EACH INSTRUMENT RACK
-
-    //!=====================================================
-
     const requests = await files.map(async (node, i) => {
       //* fetch song from url or physical audio
       const response = await fetch(node.src);
@@ -77,13 +73,6 @@ function InstrumentRack({
     });
   };
   //----------------------------------------------------------------------
-  // //? Function to play all the audio files
-  // function play(audioState) {
-  //   audioState.forEach((audioFile) => {
-  //     audioFile.source.start();
-  //   });
-  // }
-  //----------------------------------------------------------------------
   //? Use the useEffect hook to load the audio files when the component mounts
   useEffect(() => {
     ctx && loadAudioFiles(Links);
@@ -102,8 +91,6 @@ function InstrumentRack({
     if (playTrigger === "stop") {
       stop(audioFiles);
     }
-    // console.log("activeAudioFile in handleButtonClick: ", activeAudioFile);
-
     // eslint-disable-next-line
   }, [
     Links,
@@ -115,28 +102,32 @@ function InstrumentRack({
   ]);
   //----------------------------------------------------------------------
   //? Function to play all the audio files
-  function play(fileArr) {
-    fileArr.forEach((file) => {
-      file.source.start();
-    });
+  async function play(audioFiles) {
+    for (let i = 0; i < audioFiles.length; i++) {
+      await audioFiles[i].source.start();
+    }
   }
+  async function stop(audioFiles) {
+    for (let i = 0; i < audioFiles.length; i++) {
+      await audioFiles[i].source.stop();
+    }
+    loadAudioFiles(Links);
+  }
+
+  // function play(fileArr) {
+  //   fileArr.forEach((file) => {
+  //     file.source.start();
+  //   });
+  // }
   //----------------------------------------------------------------------
-  function stop(fileArr) {
-    fileArr.forEach((file) => {
-      console.log("stop");
-      console.log(file.source);
-      file.source.stop();
-      loadAudioFiles(Links);
-    });
-  }
+  // function stop(fileArr) {
+  //   fileArr.forEach((file) => {
+  //     file.source.stop();
+  //     loadAudioFiles(Links);
+  //   });
+  // }
   return (
     <div style={{ border: "3px solid green", margin: "10px" }}>
-      {/* <button
-        key={Math.floor(Math.random() * 10000000)}
-        onClick={() => play(audioFiles)}
-      >
-        start play
-      </button> */}
       {audioFiles.map((audioFile, i) => (
         <div
           key={Math.floor(Math.random() * 10000000)}
