@@ -97,11 +97,9 @@ function InstrumentRack({
     });
     console.log("playTrigger in USEEFEECT:!!!!!", playTrigger);
     if (playTrigger === "play") {
-      setTimeout(() => play(audioFiles), 850);
+      setTimeout(() => play(audioFiles), 950);
     }
-    if (playTrigger === "stop") {
-      stop(audioFiles);
-    }
+
     // console.log("activeAudioFile in handleButtonClick: ", activeAudioFile);
 
     // eslint-disable-next-line
@@ -120,15 +118,7 @@ function InstrumentRack({
       file.source.start();
     });
   }
-  //----------------------------------------------------------------------
-  function stop(fileArr) {
-    fileArr.forEach((file) => {
-      console.log("stop");
-      console.log(file.source);
-      file.source.stop();
-      loadAudioFiles(Links);
-    });
-  }
+
   return (
     <div style={{ border: "3px solid green", margin: "10px" }}>
       {/* <button
