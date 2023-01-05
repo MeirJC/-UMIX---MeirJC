@@ -1,12 +1,17 @@
 import "./App.css";
-// import Session from "./components/Session";
-import EnsambleRack from "./components/EnsambleRack";
+// import EnsambleRack from "./components/EnsambleRack";
+import Cityscape from "./components/Cityscape";
+import ConcreteJungle from "./components/ConcreteJungle";
+import StreetLights from "./components/StreetLights";
+
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {/* <Session /> */}
-        <EnsambleRack />
+        {/* <EnsambleRack /> */}
+        <Cityscape />
+        <ConcreteJungle />
+        <StreetLights />
       </header>
     </div>
   );

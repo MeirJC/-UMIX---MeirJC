@@ -114,18 +114,6 @@ function InstrumentRack({
     loadAudioFiles(Links);
   }
 
-  // function play(fileArr) {
-  //   fileArr.forEach((file) => {
-  //     file.source.start();
-  //   });
-  // }
-  //----------------------------------------------------------------------
-  // function stop(fileArr) {
-  //   fileArr.forEach((file) => {
-  //     file.source.stop();
-  //     loadAudioFiles(Links);
-  //   });
-  // }
   return (
     <div style={{ border: "3px solid green", margin: "10px" }}>
       {audioFiles.map((audioFile, i) => (
